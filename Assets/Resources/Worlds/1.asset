@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cfdd7d0e8ab37042aeea928c49d0a81, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  locationId: 1
+  Icon: {fileID: 21300000, guid: 88428ff735471364eaba8648ba175e49, type: 3}
+  nameLocation:
+    m_TableReference:
+      m_TableCollectionName: GUID:c289972294fb58442ada1e060b29989e
+    m_TableEntryReference:
+      m_KeyId: 10086982823034880
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  depth: 100
+  difficulty: 2
+  width: 256
+  height: 256
+  terrainSize: 500
+  scale: 50
+  heightMultiplier: 80
+  octaves: 4
+  persistence: 0.5
+  lacunarity: 2
+  terrainMaterial: {fileID: 2100000, guid: 0598dcf26d7a77c47874fb6d22999776, type: 2}
+  spawnObjects:
+  - objectName: Skeleton
+    prefab: {fileID: 4977125498536452823, guid: 5c8c79b9c8dccea45bcf075d7dc8e173, type: 3}
+    count: 100
+    minHeight: 30
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 0
+  - objectName: Vessel
+    prefab: {fileID: 7712370053600770871, guid: 1a89410fb1203fc408dd3aa112be72e0, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Gayser
+    prefab: {fileID: 1531538359941449030, guid: beb973eb13090f749bbac4fb45b43470, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  spawnEnemies: []
+  references:
+    version: 2
+    RefIds: []

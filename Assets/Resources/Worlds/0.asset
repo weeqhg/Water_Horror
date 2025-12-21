@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cfdd7d0e8ab37042aeea928c49d0a81, type: 3}
+  m_Name: 0
+  m_EditorClassIdentifier: 
+  locationId: 0
+  Icon: {fileID: 21300000, guid: ebe8ad9d850301448a5a5a1ee16c8b84, type: 3}
+  nameLocation:
+    m_TableReference:
+      m_TableCollectionName: GUID:c289972294fb58442ada1e060b29989e
+    m_TableEntryReference:
+      m_KeyId: 10070842977665024
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  depth: 30
+  difficulty: 1
+  width: 256
+  height: 256
+  terrainSize: 500
+  scale: 50
+  heightMultiplier: 16
+  octaves: 4
+  persistence: 0.5
+  lacunarity: 2
+  terrainMaterial: {fileID: 2100000, guid: 0598dcf26d7a77c47874fb6d22999776, type: 2}
+  spawnObjects:
+  - objectName: Seaweed
+    prefab: {fileID: 8668234236060242106, guid: 0775c55ebb270934cb868ebdf4f280a2, type: 3}
+    count: 50
+    minHeight: 0
+    maxHeight: 0
+    radius: 20
+    randomScale: 0.3
+    spawnDensity: 0
+  - objectName: Rock
+    prefab: {fileID: 601873394333210063, guid: 85ada0f7de246b645b32ffa3db6e377d, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 80
+    radius: 0
+    randomScale: 0.3
+    spawnDensity: 0
+  - objectName: Skeleton
+    prefab: {fileID: 4977125498536452823, guid: 5c8c79b9c8dccea45bcf075d7dc8e173, type: 3}
+    count: 10
+    minHeight: 20
+    maxHeight: 80
+    radius: 0
+    randomScale: 0
+    spawnDensity: 0
+  - objectName: Vessel
+    prefab: {fileID: 7712370053600770871, guid: 1a89410fb1203fc408dd3aa112be72e0, type: 3}
+    count: 50
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Geyser
+    prefab: {fileID: 1531538359941449030, guid: beb973eb13090f749bbac4fb45b43470, type: 3}
+    count: 400
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Corals
+    prefab: {fileID: 6406314451718239034, guid: 74957c3f21d792f459589acf994426af, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  spawnEnemies:
+  - objectName: AnglerFish
+    prefab: {fileID: 393137865215255387, guid: 15dbe6ca52d45af42a57cd108e738505, type: 3}
+    count: 1
+  references:
+    version: 2
+    RefIds: []

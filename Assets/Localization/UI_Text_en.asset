@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_Text_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: c289972294fb58442ada1e060b29989e, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 208000557056
+    m_Localized: Create room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6844740050944
+    m_Localized: Setting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7668446830592
+    m_Localized: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8229745369088
+    m_Localized: Main
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11326387429376
+    m_Localized: Sounds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11552875651072
+    m_Localized: Graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14278091120640
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15642326245376
+    m_Localized: English
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20936003461120
+    m_Localized: Language selection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29832654921728
+    m_Localized: Join room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29951815098368
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231371579367424
+    m_Localized: Window mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234701479256064
+    m_Localized: Fullscreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234751974481920
+    m_Localized: Borderless
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234815493021696
+    m_Localized: Windowed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264593046544384
+    m_Localized: Resolution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274634055131136
+    m_Localized: Start Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274995692216320
+    m_Localized: Copy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10070842977665024
+    m_Localized: Kelp Forest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10073858183118848
+    m_Localized: Information
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10074912966688768
+    m_Localized: 'Name:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10083800537481216
+    m_Localized: Last Location
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10084150669590528
+    m_Localized: Start Dive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10084334111670272
+    m_Localized: Next Location
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10085785064030208
+    m_Localized: 'Depth: {0} M'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10086982823034880
+    m_Localized: "\rUnderwater Rocks"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10125761935949824
+    m_Localized: 'Difficulty:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10493998859141120
+    m_Localized: Finish the Dive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10563978845863936
+    m_Localized: 'Depth:'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
