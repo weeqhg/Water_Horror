@@ -134,6 +134,58 @@ MonoBehaviour:
     m_Localized: 'Depth:'
     m_Metadata:
       m_Items: []
+  - m_Id: 15573175870275584
+    m_Localized: Buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15606069862973440
+    m_Localized: 'Price:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15607022532018176
+    m_Localized: Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15611705795395584
+    m_Localized: Flash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15611754684203008
+    m_Localized: AID
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15611804374122496
+    m_Localized: Oxygen Ballon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16913381819006976
+    m_Localized: Radar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17276135113342976
+    m_Localized: Microphone mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17290333658660864
+    m_Localized: Microphone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17298003664945152
+    m_Localized: General volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17298974252056576
+    m_Localized: Music volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17299127298015232
+    m_Localized: Effects Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17299230272372736
+    m_Localized: Voice volume
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

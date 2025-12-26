@@ -1,10 +1,11 @@
-using UnityEngine;
-using Unity.Netcode;
-using UnityEngine.Animations;
-using Unity.VisualScripting;
 using Cinemachine;
-using UnityEngine.Rendering.PostProcessing;
+using System.ComponentModel;
+using Unity.Netcode;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -31,11 +32,12 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Animator playerAnimatorOwner;
     [SerializeField] private AudioMixerController audioMixerController;
     [SerializeField] private OxygenSystem oxygenSystem;
-
+    [SerializeField] private RadarSystem radarSystem;
+    [SerializeField] private InteractionManager interactionManager;
 
     private Rigidbody rb;
     private CapsuleCollider playerColliderWalk;
-    private BoxCollider topCollider;
+    [SerializeField] private BoxCollider topCollider;
 
     public LayerMask GroundLayer = 1;
     private readonly int Y_Axis = 1;
@@ -54,8 +56,8 @@ public class PlayerController : NetworkBehaviour
     private float currentSpeed;
 
     // Слои
-    private int localPlayerLayer;
-    private int remotePlayerLayer;
+    private int hide;
+    private int show;
 
 
     private bool isGroundedCached;
@@ -116,8 +118,8 @@ public class PlayerController : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         // Получаем индексы слоев
-        localPlayerLayer = LayerMask.NameToLayer("LocalPlayer");
-        remotePlayerLayer = LayerMask.NameToLayer("RemotePlayer");
+        hide = LayerMask.NameToLayer("HideLayer");
+        show = LayerMask.NameToLayer("Default");
 
         if (IsOwner)
         {
@@ -134,11 +136,11 @@ public class PlayerController : NetworkBehaviour
 
         rb = GetComponent<Rigidbody>();
         playerColliderWalk = GetComponent<CapsuleCollider>();
-        topCollider = GetComponentInChildren<BoxCollider>();
+        radarSystem.Inizialized(transform.position);
         // НАСТРОЙКА ДЛЯ ЛОКАЛЬНОГО ИГРОКА:
 
-        SetLayerRecursively(remoteBody, localPlayerLayer);
-        SetLayerRecursively(localBody, remotePlayerLayer);
+        SetLayerRecursively(localBody, show);
+        SetLayerRecursively(remoteBody, hide);
 
         // 2. Включаем камеру игроку
         if (playerCamera != null)
@@ -158,7 +160,6 @@ public class PlayerController : NetworkBehaviour
         }
 
         GlobalEventManager.BlockMove.AddListener(BlockMove);
-        GlobalEventManager.UnBlockMove.AddListener(UnBlockMove);
         GlobalEventManager.TeleportPos.AddListener(TeleportPlayer);
 
         // 4. Настройка курсора
@@ -182,8 +183,8 @@ public class PlayerController : NetworkBehaviour
         if (rb != null) rb.isKinematic = true;
 
         // 3. Устанавливаем слой RemotePlayer для тела другого игрока
-        SetLayerRecursively(remoteBody, remotePlayerLayer);
-        SetLayerRecursively(localBody, localPlayerLayer);
+        SetLayerRecursively(remoteBody, show);
+        SetLayerRecursively(localBody, hide);
     }
 
 
@@ -193,8 +194,8 @@ public class PlayerController : NetworkBehaviour
 
         // Камера не должна видеть объекты на слое LocalPlayer
         LayerMask cameraMask = playerCamera.cullingMask;
-        cameraMask &= ~(1 << localPlayerLayer); // Убираем слой LocalPlayer из видимости камеры
-        cameraMask |= (1 << remotePlayerLayer); // Добавляем слой RemotePlayer
+        cameraMask &= ~(1 << hide); // Убираем слой LocalPlayer из видимости камеры
+        cameraMask |= (1 << show); // Добавляем слой RemotePlayer
         playerCamera.cullingMask = cameraMask;
 
         // Настройки FPS камеры
@@ -260,25 +261,59 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    public void Knock(bool enable)
+    {
+        if (enable)
+        {
+            BlockMove();
+        }
+        else
+        {
+            UnBlockMove();
+        }
+    }
+
+    private bool isDie = false;
+    public void Die(bool enable)
+    {
+        isDie = enable;
+
+        if (enable)
+        {
+            BlockMove();
+        }
+        else
+        {
+            UnBlockMove();
+        }
+    }
+
+
     private void HandleInputCancel()
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            isBlockMove = false;
-            GlobalEventManager.KeyCancel?.Invoke();
+            if (!isDie) UnBlockMove();
+            GlobalEventManager.KeyCancel?.Invoke(); 
         }
     }
     private void BlockMove()
     {
+        Debug.Log("Движение заблокировано");
         isBlockMove = true;
+        interactionManager.ToggleInteract(false);
     }
     private void UnBlockMove()
     {
+        Debug.Log("Движение разблокировано");
         isBlockMove = false;
+        interactionManager.ToggleInteract(true);
     }
 
     private void TeleportPlayer(Vector3 pos)
     {
+        UnBlockMove();
+        radarSystem.Inizialized(pos);
         transform.position = pos;
     }
 

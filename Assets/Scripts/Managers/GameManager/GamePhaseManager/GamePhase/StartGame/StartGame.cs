@@ -21,10 +21,13 @@ public class StartGame : NetworkBehaviour
     [SerializeField] private EventManager beforeStartGame;
     [SerializeField] private EventManager afterStartGame;
 
+
+    private Coroutine startCorutine;
     
     public void StartCurrentGame(int indexId)
     {
         createWorld.CreateWorldOnServer(indexId);
+
         StartForClientRpc();
     }
 
@@ -33,9 +36,16 @@ public class StartGame : NetworkBehaviour
     [ClientRpc]
     private void StartForClientRpc()
     {
+        if (!IsClient) return;
+
         submarineMain.StartDropSubmarine();
 
-        StartCoroutine(StartGameCoroutine());
+        if (startCorutine != null)
+        {
+            StopCoroutine(startCorutine);
+        }
+
+        startCorutine = StartCoroutine(StartGameCoroutine());
     }
 
 
@@ -52,5 +62,8 @@ public class StartGame : NetworkBehaviour
         submarineMain.EndDropSubmarine();
 
         afterStartGame.StartEventManager();
+
+        // Сбрасываем ссылку при завершении
+        startCorutine = null;
     }
 }

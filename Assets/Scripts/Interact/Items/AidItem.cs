@@ -70,7 +70,7 @@ public class AidItem : Item
             OxygenSystem oxygenSystem = oxygenSystemObject.GetComponent<OxygenSystem>();
 
             // Получаем конкретный штраф для лечения
-            List<OxygenSystem.OxygenPenalty> healablePenalties = oxygenSystem.GetPenaltiesByCureItem("aid");
+            List<OxygenSystem.OxygenPenalty> healablePenalties = oxygenSystem.GetPenaltiesByCureItem(nameId);
 
             if (healablePenalties.Count > 0)
             {
@@ -81,7 +81,7 @@ public class AidItem : Item
                     if (remainingHealth <= 0) break;
 
                     float healAmount = Mathf.Min(penalty.penaltyAmount, remainingHealth);
-                    oxygenSystem.RemovePenaltyServerRpc("heal", healAmount);
+                    oxygenSystem.RemovePenaltyServerRpc(nameId, healAmount);
                     remainingHealth -= healAmount;
 
                     Debug.Log($"Healed {healAmount} from penalty {penalty.id}");

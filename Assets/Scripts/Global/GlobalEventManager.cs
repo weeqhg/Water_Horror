@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+using SimpleVoiceChat;
 
 public static class GlobalEventManager
 {
@@ -25,6 +25,5 @@ public static class GlobalEventManager
     
     public static readonly UnityEvent KeyCancel = new();
     public static readonly UnityEvent BlockMove = new();
-    public static readonly UnityEvent UnBlockMove = new();
 
 }

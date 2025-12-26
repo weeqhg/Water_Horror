@@ -15,7 +15,7 @@ public class SpawnEnemyWorld : NetworkBehaviour
     [SerializeField] private int maxTotalEnemy = 0;
 
 
-    private List<SpawnEnemy> enemies = new();
+    private List<InteractiveObject> enemies = new();
     private float terrainSize = 500f;
 
     private Vector3 terrainCenter;

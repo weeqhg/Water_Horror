@@ -21,6 +21,10 @@ public class OxygenUI : MonoBehaviour
 
     [Header("Дополнительный кислород")]
     [SerializeField] private RectTransform dopOxygen;
+
+    [Header("Черепок для смерти")]
+    [SerializeField] private GameObject panelDeath;
+    [SerializeField] private Image iconHeadSkeleton;
     private float totalWidth;
     private OxygenSystem oxygenSystem;
 
@@ -39,6 +43,7 @@ public class OxygenUI : MonoBehaviour
 
     private void Start()
     {
+        panelDeath.SetActive(false);
         totalWidth = penaltiesContainer.GetComponent<RectTransform>().rect.width;
     }
 
@@ -204,5 +209,28 @@ public class OxygenUI : MonoBehaviour
             oxygenFill.color = lowColor;
         else
             oxygenFill.color = normalColor;
+    }
+
+
+    public void ToggleDeathPanel(bool enable)
+    {
+        panelDeath.SetActive(enable);
+        iconHeadSkeleton.fillAmount = 0f;
+    }
+    public void UpdateDeathUI(float timer, float duration)
+    {
+        // Безопасная проверка параметров
+        if (duration <= 0)
+        {
+            iconHeadSkeleton.fillAmount = 0f;
+            return;
+        }
+        if (timer < 0)
+        {
+            timer = 0;
+        }
+        // Нормализация таймера
+        float fillAmount = Mathf.Clamp01(timer / duration);
+        iconHeadSkeleton.fillAmount = fillAmount;
     }
 }

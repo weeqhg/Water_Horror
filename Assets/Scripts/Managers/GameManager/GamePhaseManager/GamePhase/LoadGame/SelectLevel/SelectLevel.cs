@@ -114,7 +114,6 @@ public class SelectLevel : NetworkBehaviour
     private void ExitSelectMenu()
     {
         IsEnable = false;
-        GlobalEventManager.UnBlockMove?.Invoke();
     }
 
     public void ToggleInteract()

@@ -11,6 +11,8 @@ TagManager:
   - Metal
   - Oxygen
   - Decor
+  - Item
+  - Border
   layers:
   - Default
   - TransparentFX
@@ -19,9 +21,9 @@ TagManager:
   - Water
   - UI
   - LocalPlayer
-  - RemotePlayer
+  - 
   - InteractLayer
-  - LockerLayer
+  - HideLayer
   - PostProcess
   - NavMesh
   - NonCollision

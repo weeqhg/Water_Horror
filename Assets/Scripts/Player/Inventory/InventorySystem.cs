@@ -67,7 +67,7 @@ public class InventorySystem : NetworkBehaviour
                 items[i] = item;
 
                 item.HideItemServerRpc();
-                // Штрафы кислорода (локально)
+                // Штрафы кислорода вес (локально)
                 OxygenPenaltyScriptableObject penalty = item.Penalty;
                 oxygenSystem.AddPenaltyServerRpc(
                     penalty.id,
@@ -153,7 +153,7 @@ public class InventorySystem : NetworkBehaviour
             float calculatedForce = throwForce + (throwForce * chargePercent * 2f); // Увеличиваем до 3x
 
             // ТОЛЬКО ВПЕРЕД, без вертикального смещения
-            Vector3 dropPosition = transform.position + transform.forward * 1.2f;
+            Vector3 dropPosition = transform.position + transform.forward * 1.1f + transform.up * 1.2f;
 
             Vector3 throwDirection = playerCamera.transform.forward;
 

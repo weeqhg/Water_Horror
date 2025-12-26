@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine;
 
 public class SpawnPlayers : NetworkBehaviour
 {
@@ -42,11 +43,8 @@ public class SpawnPlayers : NetworkBehaviour
         networkObject.SpawnAsPlayerObject(clientId, true);
 
         Debug.Log($"Spawned player for client {clientId} at position {spawnPoint.position}");
+
     }
-
-
-
-
 
 
     //// Метод для безопасного уничтожения игрока (только на сервере)

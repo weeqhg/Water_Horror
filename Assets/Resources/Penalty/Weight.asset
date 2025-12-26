@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f93b28177648cd49bbafceb07ef1dd1, type: 3}
   m_Name: Weight
   m_EditorClassIdentifier: 
-  id: 2
+  id: 3
   displayName: "\u0412\u0435\u0441"
   penaltyAmount: 5
   isTemporary: 0

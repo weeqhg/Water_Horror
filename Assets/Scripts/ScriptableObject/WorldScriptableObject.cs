@@ -42,5 +42,11 @@ public class WorldScriptableObject : ScriptableObject
     public List<SpawnObject> spawnObjects = new();
 
     [Header("Враги на локации")]
-    public List<SpawnEnemy> spawnEnemies = new();
+    public List<InteractiveObject> spawnEnemies = new();
+
+    [Header("Предметы на локации для продажи")]
+    public List<InteractiveObject> spawnItemsForSell = new();
+    
+    [Header("Предметы на локации для использования")]
+    public List<InteractiveObject> spawnItemsForUse = new();
 }

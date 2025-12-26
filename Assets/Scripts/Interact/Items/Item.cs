@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -9,13 +10,17 @@ using UnityEngine.UI;
 public abstract class Item : NetworkBehaviour
 {
     [Header("Item Information")]
+    [SerializeField] protected string nameId = "";
+    [SerializeField] protected int id = 0;
+    [SerializeField] private LocalizedString nameItemForUI;
+    [SerializeField] private LocalizedString descriptionItemForUI;
     [SerializeField] private Sprite _icon;
     [SerializeField] private bool _isSlider;
     [SerializeField] private float _price;
     [SerializeField] private GameObject _meshInteract;
     [SerializeField] private OxygenPenaltyScriptableObject _oxygenPenalty;
     [SerializeField] private float _weight = 0;
-
+    [SerializeField] private bool isActiveItem = true;
     // Components
     private MeshFilter _meshFilter;
     private MeshRenderer _meshRenderer;
@@ -42,6 +47,11 @@ public abstract class Item : NetworkBehaviour
     public List<Material> Materials => _originalMaterials;
     public float Price => _price;
 
+    public LocalizedString NameItem => nameItemForUI;
+    public LocalizedString DescriptionItem => descriptionItemForUI;
+    public int Id => id;
+
+    public bool IsActive => isActiveItem;
     #endregion
 
     #region Unity Lifecycle
@@ -160,6 +170,7 @@ public abstract class Item : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void HideItemServerRpc()
     {
+        isActiveItem = false;
         HideItemClientRpc();
     }
 
@@ -175,6 +186,8 @@ public abstract class Item : NetworkBehaviour
     [ServerRpc]
     public void ReturnToWorldServerRpc(Vector3 position, Vector3 throwDirection, float throwForce, float throwUpwardForce)
     {
+        isActiveItem = true;
+
         ShowItemClientRpc(position, throwDirection, throwForce, throwUpwardForce);
 
         transform.position = position;

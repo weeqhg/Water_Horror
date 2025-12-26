@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3424823797798057557}
   m_Layer: 8
   m_Name: MeshInteract
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,6 +132,7 @@ MonoBehaviour:
     HoldTime: 0.5
     Type: 1
   player: {fileID: 0}
+  isPressE: 1
   OnInteract:
     m_PersistentCalls:
       m_Calls:
@@ -226,6 +227,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9cabaa40ba8fd284e994a980ae63c61f, type: 3}
+      propertyPath: m_TagString
+      value: Item
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -287,15 +292,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdcf10f696d51a94daff2669f55f827f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameId: Flash
+  id: 1
+  nameItemForUI:
+    m_TableReference:
+      m_TableCollectionName: GUID:c289972294fb58442ada1e060b29989e
+    m_TableEntryReference:
+      m_KeyId: 15611705795395584
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  descriptionItemForUI:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   _icon: {fileID: 21300000, guid: 6f1f5297c02c0764faf40b336f827104, type: 3}
   _isSlider: 1
   _price: 5
   _meshInteract: {fileID: 7541066147289538212}
   _oxygenPenalty: {fileID: 11400000, guid: ac4add7d1d482184a82715d7a0345bd6, type: 2}
   _weight: 5
+  isActiveItem: 1
   flashPlayer: {fileID: 0}
   maxBattery: 100
   batteryDrainRate: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!54 &-1108262051378580279
 Rigidbody:
   m_ObjectHideFlags: 0

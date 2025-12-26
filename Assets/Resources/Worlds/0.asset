@@ -37,7 +37,7 @@ MonoBehaviour:
   spawnObjects:
   - objectName: Seaweed
     prefab: {fileID: 8668234236060242106, guid: 0775c55ebb270934cb868ebdf4f280a2, type: 3}
-    count: 50
+    count: 100
     minHeight: 0
     maxHeight: 0
     radius: 20
@@ -53,7 +53,7 @@ MonoBehaviour:
     spawnDensity: 0
   - objectName: Skeleton
     prefab: {fileID: 4977125498536452823, guid: 5c8c79b9c8dccea45bcf075d7dc8e173, type: 3}
-    count: 10
+    count: 100
     minHeight: 20
     maxHeight: 80
     radius: 0
@@ -61,7 +61,7 @@ MonoBehaviour:
     spawnDensity: 0
   - objectName: Vessel
     prefab: {fileID: 7712370053600770871, guid: 1a89410fb1203fc408dd3aa112be72e0, type: 3}
-    count: 50
+    count: 10
     minHeight: 0
     maxHeight: 0
     radius: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
     spawnDensity: 1
   - objectName: Geyser
     prefab: {fileID: 1531538359941449030, guid: beb973eb13090f749bbac4fb45b43470, type: 3}
-    count: 400
+    count: 100
     minHeight: 0
     maxHeight: 0
     radius: 0
@@ -77,6 +77,22 @@ MonoBehaviour:
     spawnDensity: 1
   - objectName: Corals
     prefab: {fileID: 6406314451718239034, guid: 74957c3f21d792f459589acf994426af, type: 3}
+    count: 190
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Stone_2
+    prefab: {fileID: 3223068461427654138, guid: 4ce9cbb5c01f4f942bb6e40df8484c65, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Stone_3
+    prefab: {fileID: 3223068461427654138, guid: 10268a633196fb84f808dd211c25d9b6, type: 3}
     count: 100
     minHeight: 0
     maxHeight: 0
@@ -86,7 +102,27 @@ MonoBehaviour:
   spawnEnemies:
   - objectName: AnglerFish
     prefab: {fileID: 393137865215255387, guid: 15dbe6ca52d45af42a57cd108e738505, type: 3}
-    count: 1
+    count: 10
+  spawnItemsForSell:
+  - objectName: Gold
+    prefab: {fileID: 8537937043732040229, guid: 36d87743494f3c444a52ad79159458a4, type: 3}
+    count: 20
+  - objectName: Vase
+    prefab: {fileID: 102292296628488753, guid: 92b0c9c806e50d0468ae0d1822169237, type: 3}
+    count: 20
+  spawnItemsForUse:
+  - objectName: Aid
+    prefab: {fileID: 8537937043732040229, guid: 91c76f172a2737b4f99aa9ba59614385, type: 3}
+    count: 5
+  - objectName: Flash
+    prefab: {fileID: 3958330699744254107, guid: cdb0b36b3fe771342bceb089bb0869cd, type: 3}
+    count: 5
+  - objectName: Oxygen
+    prefab: {fileID: 102292296628488753, guid: a583c9c1478c6a340b6f912f8402ab41, type: 3}
+    count: 5
+  - objectName: Radar
+    prefab: {fileID: 102292296628488753, guid: c6b8ff421da67ba418eae17de50a70ce, type: 3}
+    count: 5
   references:
     version: 2
     RefIds: []

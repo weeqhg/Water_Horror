@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Localization;
@@ -11,6 +12,7 @@ public class InteractableObject : MonoBehaviour
     [SerializeField] private LocalizedString nameObject;
     [SerializeField] private InteractionSettings interactionSettings;
     [SerializeField] private GameObject player;
+    [SerializeField] private bool isPressE = true;
     private Item item;  
 
 
@@ -25,6 +27,8 @@ public class InteractableObject : MonoBehaviour
     public InteractionSettings GetSetting() => interactionSettings;
 
     public GameObject GetPlayer() => player;
+
+    public bool IsPressE => isPressE;
 
     public float GetPrice()
     {
@@ -47,6 +51,7 @@ public class InteractableObject : MonoBehaviour
         }
     }
 
+    
 
 
     public void HighlightObject()

@@ -54,6 +54,18 @@ MonoBehaviour:
     m_Localized: Vase {0} $
     m_Metadata:
       m_Items: []
+  - m_Id: 1051405846953984
+    m_Localized: Vending Machine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1051501992984576
+    m_Localized: Selling Machine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2418067074564096
+    m_Localized: Radar {0} $
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

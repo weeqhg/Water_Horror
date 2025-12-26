@@ -1,9 +1,8 @@
-using UnityEngine;
 using Unity.Netcode;
+using UnityEngine;
 
 public class LoadGame : NetworkBehaviour
 {
-    [SerializeField] private SpawnPlayers spawnPlayers;
     private EventManager visualEffectActive;
 
 
@@ -15,21 +14,41 @@ public class LoadGame : NetworkBehaviour
     }
 
 
-    public void StartLoad(ulong value)
+    public void StartLoad(ulong clientId)
     {
-        localClientId = value;
+        if (!IsServer) return;
 
-        spawnPlayers.SpawnPlayer(localClientId);
+        // Определяем тип клиента
+        bool isHost = clientId == NetworkManager.Singleton.LocalClientId;
 
-        StartLoadClientRpc(localClientId);
+        if (isHost)
+        {
+            // Хост - прямая активация
+            visualEffectActive.StartEventManager();
+        }
+        else
+        {
+            // Клиент - через RPC
+            SendLoadRpcToClient(clientId);
+        }
+    }
+    private void SendLoadRpcToClient(ulong clientId)
+    {
+        var clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        };
+
+        StartLoadClientRpc(clientId, clientRpcParams);
     }
 
     [ClientRpc]
-    private void StartLoadClientRpc(ulong targetClientId)
+    public void StartLoadClientRpc(ulong value, ClientRpcParams clientRpcParams = default)
     {
-        if (NetworkManager.Singleton.LocalClientId != targetClientId)
-            return;
-
+        if (IsServer) return;
         visualEffectActive.StartEventManager();
     }
 }

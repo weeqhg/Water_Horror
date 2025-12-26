@@ -1,45 +1,93 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Unity.Netcode;
+using UnityEngine;
 
-
-/// <summary>
-/// Главный менеджер здесь будет происходить всё управление игрой.
-/// управление происходит через смены фаз
-/// </summary>
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] private GamePhaseManager gamePhaseManager;
+    [SerializeField] private CoinManager coinManager;
+    [SerializeField] private ShopManager shopManager;
 
-
-
-    //Локальный Id Подключенного клиента
-    [SerializeField] private ulong clientId = 0;
+    // Для отслеживания клиентов
+    private HashSet<ulong> processedClients = new HashSet<ulong>();
 
     public override void OnNetworkSpawn()
     {
         if (IsServer)
         {
+            GlobalEventManager.StartGame.AddListener(StartGame);
             NetworkManager.Singleton.OnClientConnectedCallback += OnNewClientConnected;
-            gamePhaseManager.Initialize();
+
+            // Обрабатываем уже подключенных клиентов (кроме хоста)
+            StartCoroutine(InitializeExistingClients());
         }
     }
 
-    //Тут при подключение новых игроков требуется проверка какая сейчас стадия игры, чтобы определять что делать с игроком
-    private void OnNewClientConnected(ulong value)
+    private IEnumerator InitializeExistingClients()
     {
-        this.clientId = value;
-        Debug.Log($"Подключен новый игрок с {clientId}");
+        yield return null; // Ждем один кадр для инициализации
 
-        gamePhaseManager.ProcessConnectedClient(clientId);
+        Debug.Log($"Initializing existing clients. Count: {NetworkManager.Singleton.ConnectedClients.Count}");
+
+        // Обрабатываем всех уже подключенных клиентов
+        foreach (var client in NetworkManager.Singleton.ConnectedClients)
+        {
+            if (!processedClients.Contains(client.Key))
+            {
+                SpawnClient(client.Key);
+                processedClients.Add(client.Key);
+            }
+        }
     }
 
+    // Логика спавна 
+    private void SpawnClient(ulong clientId)
+    {
+        Debug.Log($"Spawning regular client with ID: {clientId}");
+
+        // Обычные клиенты спавнятся по другой логике
+        gamePhaseManager.LoadGame(clientId);
+    }
+
+   
+
+    private void OnNewClientConnected(ulong clientId)
+    {
+        Debug.Log($"New client connected: {clientId}");
+
+        // Проверяем, не обрабатывали ли уже этого клиента
+        if (processedClients.Contains(clientId))
+        {
+            Debug.Log($"Client {clientId} already processed");
+            return;
+        }
+
+        // Спавним нового клиента
+        SpawnClient(clientId);
+        processedClients.Add(clientId);
+    }
+
+    private void StartGame(int worldId)
+    {
+        if (!IsServer) return;
+
+        Debug.Log($"Starting game with world ID: {worldId}");
+
+        // Запускаем игру для всех игроков
+        gamePhaseManager.StartGame(worldId);
+        shopManager.FullShop(worldId);
+    }
 
     public override void OnNetworkDespawn()
     {
         if (!IsServer) return;
-        NetworkManager.Singleton.OnClientConnectedCallback -= OnNewClientConnected;
-    }
 
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnNewClientConnected;
+        GlobalEventManager.StartGame.RemoveListener(StartGame);
+
+        processedClients.Clear();
+
+        Debug.Log("GameManager despawned");
+    }
 }

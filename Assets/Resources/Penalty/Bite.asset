@@ -17,4 +17,4 @@ MonoBehaviour:
   penaltyAmount: 15
   isTemporary: 0
   penaltyColor: {r: 1, g: 0, b: 0, a: 1}
-  cureItem: aid
+  cureItem: Heal

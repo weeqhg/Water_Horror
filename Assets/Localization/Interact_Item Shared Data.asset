@@ -51,6 +51,18 @@ MonoBehaviour:
     m_Key: vase
     m_Metadata:
       m_Items: []
+  - m_Id: 1051405846953984
+    m_Key: vendingMachine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1051501992984576
+    m_Key: sellMachine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2418067074564096
+    m_Key: radar
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

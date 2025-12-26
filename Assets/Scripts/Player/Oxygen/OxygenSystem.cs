@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
+using System.Collections;
 
 public class OxygenSystem : NetworkBehaviour
 {
@@ -12,6 +13,7 @@ public class OxygenSystem : NetworkBehaviour
 
     [Header("UI Reference")]
     [SerializeField] private OxygenUI oxygenUI;
+    [SerializeField] private SimpleRagdollController ragdollController;
     [SerializeField] private ParticleSystem oxygenParticle;
     private ParticleSystem.MainModule oxygenParticleMain;
 
@@ -181,11 +183,6 @@ public class OxygenSystem : NetworkBehaviour
 
                 Debug.Log($"Используется дополнительный кислород: {currentDopOxygen.Value:F1}");
             }
-            // Если закончился весь кислород
-            else
-            {
-                OnOxygenDepleted();
-            }
         }
         else
         {
@@ -222,8 +219,9 @@ public class OxygenSystem : NetworkBehaviour
         if (Mathf.Abs(cachedTotalPenalty - newTotalPenalty) > 0.01f)
         {
             cachedTotalPenalty = newTotalPenalty;
-            float newMaxOxygen = Mathf.Max(10f, maxOxygen - cachedTotalPenalty);
+            float newMaxOxygen = Mathf.Max(0f, maxOxygen - cachedTotalPenalty);
             currentMaxOxygen.Value = newMaxOxygen;
+
 
             if (currentOxygen.Value > currentMaxOxygen.Value)
             {
@@ -247,10 +245,36 @@ public class OxygenSystem : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void AddPenaltyServerRpc(string penaltyId, string displayName, float penaltyAmount, bool isTemporary, Color color, string cureItem = "")
     {
+        if (currentMaxOxygen.Value <= 0f)
+        {
+            return;
+        }
+
+        // Рассчитываем доступную емкость для штрафов
+        float availableForPenalties = maxOxygen - cachedTotalPenalty;
+
+        if (availableForPenalties <= 0f)
+        {
+            Debug.LogWarning($"Cannot add penalty {penaltyId}: no room for more penalties");
+            return;
+        }
+
+        // 3. Ограничиваем добавляемый штраф доступным местом
+        float penaltyToAdd = Mathf.Min(penaltyAmount, availableForPenalties);
+
         // Быстрый поиск в Dictionary вместо List.Find
         if (activePenaltiesDict.TryGetValue(penaltyId, out var existingPenalty))
         {
-            existingPenalty.penaltyAmount += penaltyAmount;
+            float maxPossibleForThisPenalty = maxOxygen - (cachedTotalPenalty - existingPenalty.penaltyAmount);
+            float actuallyCanAdd = Mathf.Min(penaltyToAdd, maxPossibleForThisPenalty);
+
+            if (actuallyCanAdd <= 0f)
+            {
+                Debug.LogWarning($"Cannot add to penalty {penaltyId}: would exceed limits");
+                return;
+            }
+
+            existingPenalty.penaltyAmount += actuallyCanAdd;
             existingPenalty.isTemporary = isTemporary;
 
             if (!string.IsNullOrEmpty(displayName))
@@ -266,11 +290,13 @@ public class OxygenSystem : NetworkBehaviour
             return;
         }
 
+
+        // penaltyToAdd уже ограничен availableForPenalties
         var penalty = new OxygenPenalty
         {
             id = penaltyId,
             displayName = displayName,
-            penaltyAmount = penaltyAmount,
+            penaltyAmount = penaltyToAdd,
             isTemporary = isTemporary,
             penaltyColor = color,
             cureItem = cureItem
@@ -279,7 +305,7 @@ public class OxygenSystem : NetworkBehaviour
         activePenaltiesDict.Add(penaltyId, penalty);
         needsMaxOxygenUpdate = true;
 
-        SyncPenaltyClientRpc(penaltyId, displayName, penaltyAmount, isTemporary, color, cureItem);
+        SyncPenaltyClientRpc(penaltyId, displayName, penaltyToAdd, isTemporary, color, cureItem);
     }
 
     //Синхронизируем с клиентом для того чтобы отобразить на Ui
@@ -308,6 +334,7 @@ public class OxygenSystem : NetworkBehaviour
             activePenaltiesDict.Add(penaltyId, penalty);
         }
 
+        ragdollController.Knockout(0.5f);
         oxygenUI?.UpdatePenaltyUI(); // Используем null-conditional operator
     }
     #endregion
@@ -321,6 +348,21 @@ public class OxygenSystem : NetworkBehaviour
 
     private void UpdateTemporaryPenalties()
     {
+        if (IsServer)
+        { 
+            // ⭐⭐ ОБНОВЛЯЕМ КЭШ СРАЗУ, чтобы GetAvailablePenaltyCapacity() работал корректно
+            float newTotalPenalty = 0f;
+            foreach (var penalty in activePenaltiesDict.Values)
+            {
+                newTotalPenalty += penalty.penaltyAmount;
+            }
+
+            if (Mathf.Abs(cachedTotalPenalty - newTotalPenalty) > 0.01f)
+            {
+                cachedTotalPenalty = newTotalPenalty;
+            }
+        }
+
         bool localNeedsUpdate = false;
         var keysToRemove = new List<string>();
 
@@ -445,10 +487,60 @@ public class OxygenSystem : NetworkBehaviour
         return result;
     }
 
-
-    private void OnOxygenDepleted()
+    private float oxygenRecoveryTime = 30f; //30 секунд чтобы спасти
+    private Coroutine recoveryCoroutine;
+    private float requiredOxygenLevel = 5f;
+    private void OnOxygenKnock()
     {
-        Debug.Log("Player died from oxygen depletion");
+        ragdollController.ToggleDie(true);
+
+        if (recoveryCoroutine != null) return;
+
+        Debug.Log("Снова смерть");
+        recoveryCoroutine = StartCoroutine(WaitAndRecover());
+    }
+
+    private IEnumerator WaitAndRecover()
+    {
+        Debug.Log("Начинается восстановление после отключки...");
+
+        float timer = 0f;
+       
+        oxygenUI.ToggleDeathPanel(true);
+
+        while (timer < oxygenRecoveryTime)
+        {
+            timer += Time.deltaTime;
+
+            // Проверяем, восстановился ли кислород
+            if (currentOxygen.Value >= requiredOxygenLevel)
+            {
+                Debug.Log($"Кислород восстановлен до {currentOxygen.Value:F1}, поднимаем игрока");
+                ragdollController.ToggleDie(false);
+                oxygenUI.ToggleDeathPanel(false);
+                recoveryCoroutine = null;
+                yield break;
+            }
+
+            oxygenUI.UpdateDeathUI(timer, oxygenRecoveryTime);
+
+
+            yield return null;
+        }
+
+        // Если время вышло, но кислород восстановился
+        if (currentOxygen.Value >= requiredOxygenLevel)
+        {
+            Debug.Log($"Время вышло, кислород {currentOxygen.Value:F1}, поднимаем игрока");
+            ragdollController.ToggleDie(false);
+            oxygenUI.ToggleDeathPanel(false);
+        }
+        else
+        {
+            Debug.Log("Player died from oxygen depletion");
+            Debug.Log($"Время вышло, но кислород ({currentOxygen.Value:F1}) недостаточен для восстановления");
+        }
+        recoveryCoroutine = null;
     }
 
     private void OnOxygenChanged(float oldValue, float newValue)
@@ -456,6 +548,11 @@ public class OxygenSystem : NetworkBehaviour
         if (newValue <= criticalOxygenLevel && oldValue > criticalOxygenLevel)
         {
             OnCriticalOxygen();
+        }
+
+        if (newValue <= 1f)
+        {
+            OnOxygenKnock();
         }
         oxygenUI?.UpdateOxygenSlider();
     }
@@ -486,7 +583,6 @@ public class OxygenSystem : NetworkBehaviour
 
     public List<OxygenPenalty> GetInfinitePenalties()
     {
-        // Используем Dictionary
         var result = new List<OxygenPenalty>();
         foreach (var penalty in activePenaltiesDict.Values)
         {
@@ -523,11 +619,11 @@ public class OxygenSystem : NetworkBehaviour
     public void RestoreOxygenToFull() => RestoreOxygenToFullServerRpc();
 
 
-
-
     [ServerRpc(RequireOwnership = false)]
     public void AddDopOxygenServerRpc(float amount)
     {
         currentDopOxygen.Value = Mathf.Max(0, currentDopOxygen.Value + amount);
     }
+
+
 }

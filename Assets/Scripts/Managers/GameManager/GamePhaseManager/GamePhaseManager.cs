@@ -15,32 +15,23 @@ public enum GamePhase
 
 public class GamePhaseManager : NetworkBehaviour
 {
+    [SerializeField] private SpawnPlayers spawnPlayers;
     [SerializeField] private LoadGame loadGame;
     [SerializeField] private StartGame startGame;
     private NetworkVariable<GamePhase> currentGamePhase = new(GamePhase.LoadGame);
 
-
-    private ulong localClientId = 0;
-    public void Initialize()
-    {
-        GlobalEventManager.LoadGame.AddListener(LoadGame);
-        GlobalEventManager.StartGame.AddListener(StartGame);
-    }
-
     public void ProcessConnectedClient(ulong value)
     {
-        localClientId = value;
-
         if (currentGamePhase.Value == GamePhase.LoadGame) GlobalEventManager.LoadGame?.Invoke();
     }
 
-
-    private void LoadGame()
+    public void LoadGame(ulong value)
     {
-        loadGame.StartLoad(localClientId);
+        spawnPlayers.SpawnPlayer(value);
+        loadGame.StartLoad(value);
     }
 
-    private void StartGame(int worldId)
+    public void StartGame(int worldId)
     {
         startGame.StartCurrentGame(worldId);
     }

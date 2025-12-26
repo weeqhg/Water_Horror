@@ -13,6 +13,8 @@ public class CreateWorld : NetworkBehaviour
     [SerializeField] private SpawnObjectWorld spawnObjectWorld;
     [SerializeField] private SubmarineMain submarineMain;
     [SerializeField] private SpawnEnemyWorld spawnEnemyWorld;
+    [SerializeField] private SpawnItems spawnItems;
+    [SerializeField] private BorderWorld borderWorld;
 
     [SerializeField] private NetworkVariable<int> netWorldId = new(0);
     [SerializeField] private NetworkVariable<int> netWorldSeed = new(0);
@@ -51,6 +53,8 @@ public class CreateWorld : NetworkBehaviour
         submarineMain.Fall(makeTerrainWorld.GetCentre());
 
         spawnEnemyWorld.StartSpawnEnemy();
+
+        spawnItems.StartSpawnItems();
     }
 
     private void RandomizeParameters()
@@ -93,6 +97,10 @@ public class CreateWorld : NetworkBehaviour
 
         spawnEnemyWorld.ApplyWorldSetting(world);
 
+        spawnItems.ApplyWorldSetting(world);
+
+        borderWorld.ApplyWorldSetting(world);
+
         Debug.Log($"{(IsServer ? "Server" : "Client")} loaded location: {world.name}");
     }
 
@@ -100,6 +108,7 @@ public class CreateWorld : NetworkBehaviour
     {
         makeTerrainWorld.GenerateTerrain(seed);
         spawnObjectWorld.SpawnObject(seed);
+        borderWorld.StartReduce();
     }
     #endregion
 

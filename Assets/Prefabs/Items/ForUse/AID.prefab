@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7941834632837285705}
   m_Layer: 8
   m_Name: MeshInteract
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,6 +110,7 @@ MonoBehaviour:
     HoldTime: 0.5
     Type: 1
   player: {fileID: 0}
+  isPressE: 1
   OnInteract:
     m_PersistentCalls:
       m_Calls:
@@ -168,7 +169,7 @@ GameObject:
   - component: {fileID: 6606492344012158696}
   m_Layer: 8
   m_Name: AID
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -222,13 +223,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e4230b4a8b8f045887182b55deb371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameId: Heal
+  id: 0
+  nameItemForUI:
+    m_TableReference:
+      m_TableCollectionName: GUID:c289972294fb58442ada1e060b29989e
+    m_TableEntryReference:
+      m_KeyId: 15611754684203008
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  descriptionItemForUI:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   _icon: {fileID: 21300000, guid: f4629847df9cffd4ba034e25a62174d5, type: 3}
   _isSlider: 1
   _price: 5
   _meshInteract: {fileID: 8081819683635453253}
   _oxygenPenalty: {fileID: 11400000, guid: ac4add7d1d482184a82715d7a0345bd6, type: 2}
   _weight: 5
+  isActiveItem: 1
   maxHealthScore: 30
+  references:
+    version: 2
+    RefIds: []
 --- !u!33 &5375278944691117882
 MeshFilter:
   m_ObjectHideFlags: 0

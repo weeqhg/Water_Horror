@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Localization;
@@ -36,12 +37,14 @@ public class InteractionManager : NetworkBehaviour
 
     [Header("UI References")]
     [SerializeField] private GameObject _interactionTipsPanel;
+    [SerializeField] private TextMeshProUGUI _pressTipsE;
     [SerializeField] private LocalizeStringEvent _objectNameLocalizer;
     [SerializeField] private Image _progressBar;
 
     private InteractableObject _currentInteractable;
     private InteractionSettings _currentInteractionSettings;
     private bool _canInteract = true;
+    private bool _canInteractActive = true;
 
     private bool _isHoldingInteractKey;
     private float _holdTimer;
@@ -60,7 +63,10 @@ public class InteractionManager : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner && !_canInteract) return;
+        if (!IsOwner) return;
+        if (!_canInteractActive) return;
+        if (!_canInteract) return;
+
 
         HandleRaycastDetection();
         HandleInteractionInput();
@@ -181,7 +187,7 @@ public class InteractionManager : NetworkBehaviour
         _currentInteractable.HighlightObject();
 
         _currentInteractionSettings = _currentInteractable.GetSetting();
-        UpdateInteractionUI(true, _currentInteractable.GetName(), _currentInteractable.GetPrice());
+        UpdateInteractionUI(true, _currentInteractable.GetName(), _currentInteractable.GetPrice(), _currentInteractable.IsPressE);
     }
 
     private void ClearCurrentInteractable()
@@ -190,7 +196,7 @@ public class InteractionManager : NetworkBehaviour
 
         _currentInteractable.DeselectObject();
         ResetHoldInteraction();
-        UpdateInteractionUI(false, null, 0);
+        UpdateInteractionUI(false, null, 0, false);
 
         _currentInteractable = null;
     }
@@ -258,7 +264,7 @@ public class InteractionManager : NetworkBehaviour
 
         _currentInteractable.DeselectObject();
 
-        UpdateInteractionUI(false, null, 0);
+        UpdateInteractionUI(false, null, 0, false);
 
         _currentInteractable = null;
 
@@ -267,20 +273,34 @@ public class InteractionManager : NetworkBehaviour
 
     private IEnumerator InteractionCooldownRoutine()
     {
-        _canInteract = false;
+        _canInteractActive = false;
         yield return new WaitForSeconds(_interactionCooldown);
-        _canInteract = true;
+        _canInteractActive = true;
     }
 
+    public  void ToggleInteract(bool value)
+    {
+        _canInteract = value;
+    }
     #endregion
 
     #region UI Management
 
-    private void UpdateInteractionUI(bool show, LocalizedString objectName, float price)
+    private void UpdateInteractionUI(bool show, LocalizedString objectName, float price, bool IsPressE)
     {
         if (_interactionTipsPanel == null) return;
 
         _interactionTipsPanel.SetActive(show);
+
+        if (show && IsPressE)
+        {
+            _pressTipsE.enabled = true;
+        }
+        else
+        {
+            _pressTipsE.enabled = false;
+        }
+
 
         if (show && objectName != null && _objectNameLocalizer != null)
         {

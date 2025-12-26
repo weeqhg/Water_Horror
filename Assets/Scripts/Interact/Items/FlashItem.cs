@@ -34,12 +34,12 @@ public class FlashItem : Item
 
     public override void InteractItem()
     {
-        if (flashPlayer == null || currentBattery.Value <= 0) return;
-        isActive = !isActive;
+        //if (flashPlayer == null || currentBattery.Value <= 0) return;
+        //isActive = !isActive;
 
-        BatteryDrainServerRpc(isActive);
+        //BatteryDrainServerRpc(isActive);
 
-        flashPlayer.OnFlashPlayer(isActive);
+        //flashPlayer.OnFlashPlayer(isActive);
     }
 
     public override void ChangeItem()
