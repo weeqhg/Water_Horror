@@ -10,6 +10,8 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private Image[] selectedSlotUI;
     [SerializeField] private GameObject[] sliders;
     [SerializeField] private Sprite noneIcon;
+
+
     private int lastIndex = -1;
 
 

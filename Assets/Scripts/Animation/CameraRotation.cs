@@ -5,14 +5,12 @@ using DG.Tweening;
 /// <summary>
 /// Используется в лобби чтобы оживить сцену ссзади
 /// </summary>
-
-
 public class CameraRotation : MonoBehaviour
 {
-    [Header("Rotation Settings")]
-    public float rotationAngle = 10f;    // Угол вращения
-    public float rotationDuration = 2f;  // Длительность одного цикла
+    [Header("Rotation Settings")] public float rotationAngle = 10f; // Угол вращения
+    public float rotationDuration = 2f; // Длительность одного цикла
     public Ease easeType = Ease.InOutSine;
+
 
     private Sequence rotationSequence;
 

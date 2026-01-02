@@ -23,7 +23,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  depth: 100
+  depth: 200
   difficulty: 2
   width: 256
   height: 256
@@ -45,7 +45,7 @@ MonoBehaviour:
     spawnDensity: 0
   - objectName: Vessel
     prefab: {fileID: 7712370053600770871, guid: 1a89410fb1203fc408dd3aa112be72e0, type: 3}
-    count: 100
+    count: 50
     minHeight: 0
     maxHeight: 0
     radius: 0
@@ -59,7 +59,62 @@ MonoBehaviour:
     radius: 0
     randomScale: 0
     spawnDensity: 1
-  spawnEnemies: []
+  - objectName: Corals
+    prefab: {fileID: 6406314451718239034, guid: 74957c3f21d792f459589acf994426af, type: 3}
+    count: 300
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 0
+  - objectName: Stone_3
+    prefab: {fileID: 3223068461427654138, guid: 10268a633196fb84f808dd211c25d9b6, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Stone_2
+    prefab: {fileID: 3223068461427654138, guid: 4ce9cbb5c01f4f942bb6e40df8484c65, type: 3}
+    count: 100
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  - objectName: Stone_1
+    prefab: {fileID: 601873394333210063, guid: 85ada0f7de246b645b32ffa3db6e377d, type: 3}
+    count: 200
+    minHeight: 0
+    maxHeight: 0
+    radius: 0
+    randomScale: 0
+    spawnDensity: 1
+  spawnEnemies:
+  - objectName: AnglerFish
+    prefab: {fileID: 393137865215255387, guid: 15dbe6ca52d45af42a57cd108e738505, type: 3}
+    count: 15
+  spawnItemsForSell:
+  - objectName: Gold
+    prefab: {fileID: 8537937043732040229, guid: 36d87743494f3c444a52ad79159458a4, type: 3}
+    count: 50
+  - objectName: Vase
+    prefab: {fileID: 102292296628488753, guid: 92b0c9c806e50d0468ae0d1822169237, type: 3}
+    count: 50
+  spawnItemsForUse:
+  - objectName: aid
+    prefab: {fileID: 8537937043732040229, guid: 91c76f172a2737b4f99aa9ba59614385, type: 3}
+    count: 15
+  - objectName: flash
+    prefab: {fileID: 3958330699744254107, guid: cdb0b36b3fe771342bceb089bb0869cd, type: 3}
+    count: 15
+  - objectName: o2
+    prefab: {fileID: 102292296628488753, guid: a583c9c1478c6a340b6f912f8402ab41, type: 3}
+    count: 15
+  - objectName: Radar
+    prefab: {fileID: 102292296628488753, guid: c6b8ff421da67ba418eae17de50a70ce, type: 3}
+    count: 15
   references:
     version: 2
     RefIds: []

@@ -14,11 +14,12 @@ public class FishMovement : NetworkBehaviour
     [SerializeField] private float depthChangeInterval = 3f;
 
     [Header("AI Settings")]
+    [SerializeField] private AudioSource audioSource;
     [SerializeField] private float patrolRadius = 15f;
     [SerializeField] private float chaseRange = 10f;
     [SerializeField] private float attackRange = 3f;
     [SerializeField] private float attackDuration = 2f;
-    [SerializeField] private float fleeDuration = 5f;
+    [SerializeField] private float fleeDuration = 6f;
     [SerializeField] private float circleRadius = 5f;
     [SerializeField] private float circleSpeed = 1f;
     [SerializeField] private float attackChance = 0.3f;
@@ -106,6 +107,31 @@ public class FishMovement : NetworkBehaviour
         CheckGroundDistance();
         HandleHorizontalMovement();
         HandleVerticalMovement();
+
+        ApplyEscapeImpulse();
+    }
+
+    private void ApplyEscapeImpulse()
+    {
+        if (!isEscapeImpulseActive) return;
+
+        // Применяем импульс в течение 1 секунды
+        float elapsedFleeTime = Time.time - fleeStartTime;
+
+        if (elapsedFleeTime < 2f)
+        {
+            // Сильный импульс от игрока
+            rb.AddForce(escapeImpulseDirection * escapeImpulseForce * 1000 * Time.fixedDeltaTime,
+                       ForceMode.Force);
+
+            // Также поворачиваем в направлении ухода
+            RotateTowardsDirection(escapeImpulseDirection);
+        }
+        else
+        {
+
+            isEscapeImpulseActive = false;
+        }
     }
     #endregion
 
@@ -115,6 +141,11 @@ public class FishMovement : NetworkBehaviour
         navAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         addPenalty = GetComponent<AddPenalty>();
+
+        if (Random.Range(0f, 1f) > 0.5f)
+        {
+            gameObject.tag = "Uncknow";
+        }
 
         if (IsServer)
         {
@@ -352,16 +383,48 @@ public class FishMovement : NetworkBehaviour
         return Vector3.Distance(transform.position, player.position) < attackRange;
     }
 
+    private Vector3 escapeImpulseDirection;
+    private float escapeImpulseForce = 15f;
+    private bool isEscapeImpulseActive = false;
+
     private void PerformAttack()
     {
+        PlayAttackSoundClientRpc();
+
         OxygenSystem playerOxygen = player.GetComponent<OxygenSystem>();
         if (playerOxygen != null && addPenalty != null)
         {
             addPenalty.AddPenaltyPlayer(playerOxygen);
         }
 
-        SwitchToState(FishState.Flee);
+        // Рассчитываем направление ухода - от игрока
+        if (player != null)
+        {
+            escapeImpulseDirection = (transform.position - player.position).normalized;
+
+            // Добавляем немного вверх
+            escapeImpulseDirection.y = 0f;
+            escapeImpulseDirection.Normalize();
+
+            isEscapeImpulseActive = true;
+        }
+
+        SwitchToState(FishState.Chase);
         fleeStartTime = Time.time;
+
+
+    }
+
+
+    [ClientRpc]
+    private void PlayAttackSoundClientRpc()
+    {
+        audioSource.Stop();
+
+        if (audioSource != null)
+        {
+            audioSource.Play();
+        }
     }
 
     private bool IsAttackDurationExceeded(float elapsedTime)
@@ -371,6 +434,8 @@ public class FishMovement : NetworkBehaviour
 
     private void EndAttack()
     {
+        gameObject.tag = "Enemy";
+
         if (IsPlayerInRange(chaseRange))
         {
             SwitchToState(FishState.Chase);
@@ -379,13 +444,26 @@ public class FishMovement : NetworkBehaviour
         {
             SwitchToState(FishState.Patrol);
         }
+
     }
     #endregion
 
     #region Flee State
+    // Модифицировать UpdateFleeState
     private void UpdateFleeState()
     {
         float elapsedFleeTime = Time.time - fleeStartTime;
+
+        // После импульса (1 секунда) начинаем всплывать
+        if (elapsedFleeTime > 5f)
+        {
+            // Плавное всплытие
+            if (transform.position.y < maxDepth - 2f)
+            {
+                Vector3 upDirection = Vector3.up;
+                MoveInDirection(upDirection, movementForce * 0.5f);
+            }
+        }
 
         if (IsFleeDurationExceeded(elapsedFleeTime))
         {

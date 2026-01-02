@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public abstract class Item : NetworkBehaviour
 {
     [Header("Item Information")]
+    [SerializeField] private AudioSource audioSource;
     [SerializeField] protected string nameId = "";
     [SerializeField] protected int id = 0;
     [SerializeField] private LocalizedString nameItemForUI;
@@ -202,7 +203,6 @@ public abstract class Item : NetworkBehaviour
     private void ShowItemClientRpc(Vector3 position, Vector3 throwDirection, float throwForce, float throwUpwardForce)
     {
         SetItemVisibility(true);
-
         //transform.position = position;
         //ApplyThrowForce(throwDirection, throwForce, throwUpwardForce);
     }
@@ -263,4 +263,14 @@ public abstract class Item : NetworkBehaviour
     }
 
     #endregion
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Слой Ground с индексом = 3
+        if (collision.gameObject.layer == 3)
+        {
+            audioSource.Play();
+        }
+    }
 }

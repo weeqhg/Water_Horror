@@ -231,6 +231,7 @@ public class InteractionManager : NetworkBehaviour
 
     private void CompleteHoldInteraction()
     {
+        
         PerformInteraction();
         ResetHoldInteraction();
     }

@@ -12,7 +12,6 @@ public class FlashPlayer : NetworkBehaviour
     private bool isFlash = false;
     private float minDensity = 0.3f;
     private float maxDensity = 0.1f;
-    [SerializeField] private Material fog;
     private Coroutine flashCoroutine;
 
     private float transitionDuration = 1.0f; // Длительность перехода в секундах
@@ -93,22 +92,8 @@ public class FlashPlayer : NetworkBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!IsOwner) return;
 
-        if (other.CompareTag("Dry"))
-        {
-            ChangeFog(false);
-        }
-        if (other.CompareTag("Water"))
-        {
-            ChangeFog(true);
-        }
-
-    }
-
-    private void ChangeFog(bool enable)
+    public void ChangeFog(bool enable)
     {
         if (enable)
         {

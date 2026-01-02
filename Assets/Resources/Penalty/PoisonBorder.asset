@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PoisonBorder
   m_EditorClassIdentifier: 
   id: 2
-  displayName: "\u041E\u0442\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435"
-  penaltyAmount: 100
+  displayName: "\u041F\u0443\u0441\u0442\u043E\u0442\u0430"
+  penaltyAmount: 15
   isTemporary: 1
-  penaltyColor: {r: 0.17849922, g: 1, b: 0, a: 1}
+  penaltyColor: {r: 1, g: 1, b: 1, a: 0}
   cureItem: Heal

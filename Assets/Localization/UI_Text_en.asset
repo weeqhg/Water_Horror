@@ -186,6 +186,42 @@ MonoBehaviour:
     m_Localized: Voice volume
     m_Metadata:
       m_Items: []
+  - m_Id: 18146411631984640
+    m_Localized: 'Day: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18412020076756992
+    m_Localized: Next mission
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18413207308058624
+    m_Localized: Start again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18437759396331520
+    m_Localized: Author
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19813139357220864
+    m_Localized: Room code...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19815465816014848
+    m_Localized: Developer - weken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19815930612006912
+    m_Localized: Musician - DorMydOrMusickar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19816235474993152
+    m_Localized: Musician - cryinshiga
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19816134346129408
+    m_Localized: Start Level
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

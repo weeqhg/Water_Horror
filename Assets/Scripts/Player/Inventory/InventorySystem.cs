@@ -5,7 +5,7 @@ using UnityEngine;
 public class InventorySystem : NetworkBehaviour
 {
     [Header("Settings")]
-    public int slotsCount = 4;
+    public int slotsCount = 5;
     [SerializeField] private GameObject handItem;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private float throwForce = 15f;
@@ -29,6 +29,11 @@ public class InventorySystem : NetworkBehaviour
     private bool isThrowCharging = false;
     private float throwChargeTime = 0f;
     private const float MAX_CHARGE_TIME = 2f;
+
+
+    //Звуки
+    [SerializeField] private AudioSource audioSource;
+
     public override void OnNetworkSpawn()
     {
         itemFilter = handItem.GetComponent<MeshFilter>();
@@ -111,6 +116,7 @@ public class InventorySystem : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) SetSelectedSlot(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SetSelectedSlot(2);
         if (Input.GetKeyDown(KeyCode.Alpha4)) SetSelectedSlot(3);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) SetSelectedSlot(4);
 
         // Выброс предмета
         DropItemWithForce();
@@ -201,6 +207,8 @@ public class InventorySystem : NetworkBehaviour
             selectedSlot = newSlot;
             currentItem = items[selectedSlot];
         }
+
+        audioSource.Play();
 
         // Локальное обновление UI и визуала
         UpdateLocalHandAndUI();
@@ -294,7 +302,6 @@ public class InventorySystem : NetworkBehaviour
             itemFilter.mesh = null;
             itemRenderer.materials = new Material[0];
         }
-
         // Обновляем выделение слота в UI
         inventoryUI.SelectSlot(selectedSlot);
     }
@@ -374,6 +381,24 @@ public class InventorySystem : NetworkBehaviour
 
     #region Public Methods
 
+
+    public void DropAllItems()
+    {
+        if (!IsOwner) return; // Только владелец
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] != null)
+            {
+                // Вызов сервера для выбрасывания предмета
+                Vector3 dropPosition = transform.position + transform.forward * 1.1f + transform.up * 1.2f; // Можно изменить по необходимости
+                Vector3 throwDirection = playerCamera.transform.forward; // Или другой вектор направления
+                float force = throwForce; // или любой другой force, который подходит
+
+                DropItemServerRpc(i, dropPosition, throwDirection, force);
+            }
+        }
+    }
+
     public Item GetCurrentItem()
     {
         return currentItem;
@@ -391,23 +416,13 @@ public class InventorySystem : NetworkBehaviour
 
     #endregion
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (items == null || items.Count == 0) return;
 
-        if (other.CompareTag("Dry"))
+    public void ToggleItemInWater(bool enable)
+    {
+        foreach (var item in items)
         {
-            foreach (var item in items)
-            {
-                if (item != null) item.WaterCheckServerRpc(false);
-            }
-        }
-        if (other.CompareTag("Water"))
-        {
-            foreach (var item in items)
-            {
-                if (item != null) item.WaterCheckServerRpc(true);
-            }
+            if (item != null) item.WaterCheckServerRpc(enable);
         }
     }
+
 }

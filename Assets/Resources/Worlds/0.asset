@@ -23,7 +23,7 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  depth: 30
+  depth: 100
   difficulty: 1
   width: 256
   height: 256

@@ -62,7 +62,7 @@ public class MakeTerrainWorld : MonoBehaviour
 
         FinishMake();
 
-        terrainCenter = terrain.transform.position + new Vector3(terrainSize / 2f, 0f, terrainSize / 2f);
+        terrainCenter = new Vector3(terrainSize / 2f, 0f, terrainSize / 2f);
 
         Debug.Log($"X: {terrainCenter.x}, Z: {terrainCenter.z}");
     }
@@ -73,7 +73,7 @@ public class MakeTerrainWorld : MonoBehaviour
         terrainData = new TerrainData();
 
         terrainData.heightmapResolution = width + 1;
-        terrainData.size = new Vector3(terrainSize, heightMultiplier, terrainSize);
+        terrainData.size = new Vector3(terrainSize + 200, heightMultiplier, terrainSize + 200);
         terrain.terrainData = terrainData;
 
         offset = GenerateOffsetFromSeed();
@@ -137,5 +137,4 @@ public class MakeTerrainWorld : MonoBehaviour
         if (terrainCollider != null) terrainCollider.terrainData = terrainData;   
         Debug.Log("Server: Terrain generated");
     }
-
 }

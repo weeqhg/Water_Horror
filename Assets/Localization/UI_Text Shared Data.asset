@@ -183,6 +183,42 @@ MonoBehaviour:
     m_Key: voiceVolume
     m_Metadata:
       m_Items: []
+  - m_Id: 18146411631984640
+    m_Key: day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18412020076756992
+    m_Key: nextLevel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18413207308058624
+    m_Key: startAgain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18437759396331520
+    m_Key: author
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19813139357220864
+    m_Key: keyRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19815465816014848
+    m_Key: developerWekenDev
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19815930612006912
+    m_Key: MusicianDorMydOrmusickar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19816134346129408
+    m_Key: startLevel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19816235474993152
+    m_Key: music_cryinshiga
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

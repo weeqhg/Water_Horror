@@ -78,6 +78,12 @@ public class CreateWorld : NetworkBehaviour
 
         StartCreateWorld(netWorldSeed.Value);
     }
+
+    public void ClearWorldForServer()
+    {
+        spawnItems.ClearNetworkObjects();
+        spawnEnemyWorld.ClearNetworkObjects();
+    }
     #endregion
 
 
@@ -108,7 +114,11 @@ public class CreateWorld : NetworkBehaviour
     {
         makeTerrainWorld.GenerateTerrain(seed);
         spawnObjectWorld.SpawnObject(seed);
-        borderWorld.StartReduce();
+    }
+
+    public void ClearWorldForClient()
+    {
+        spawnObjectWorld.ClearAllObjects();
     }
     #endregion
 

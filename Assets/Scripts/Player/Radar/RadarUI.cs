@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class RadarUI : MonoBehaviour
 {
+    [SerializeField] private AudioSource audioSource;
     [SerializeField] private GameObject radarUI;
     [SerializeField] private RectTransform radarRect;
     [SerializeField] private RectTransform waveRect;
@@ -17,8 +18,9 @@ public class RadarUI : MonoBehaviour
     [SerializeField] private Sprite iconPlayer;
     [SerializeField] private Sprite iconItem;
     [SerializeField] private Sprite iconEnemy;
+    [SerializeField] private Sprite iconOxygen;
     [SerializeField] private Sprite iconUncknow;
-
+    [SerializeField] private Sprite iconHideItem;
 
 
     [Header("World Settings")]
@@ -104,8 +106,9 @@ public class RadarUI : MonoBehaviour
 
     public void CreateOneMark(GameObject detectObj)
     {
-        Sprite icon = iconUncknow;
+        Sprite icon = iconHideItem;
         Color color = Color.white;
+
         switch (detectObj.tag)
         {
             case "Item":
@@ -118,7 +121,15 @@ public class RadarUI : MonoBehaviour
                 break;
             case "Player":
                 icon = iconPlayer;
-                color = Color.blue;
+                color = Color.yellow;
+                break;
+            case "Oxygen":
+                icon = iconOxygen;
+                color = Color.cyan;
+                break;
+            case "Uncknow":
+                icon = iconUncknow;
+                color = Color.magenta;
                 break;
         }
         // Задержка перед следующим маркером (можно сделать зависимой от расстояния)
@@ -212,6 +223,10 @@ public class RadarUI : MonoBehaviour
         pulseTween = waveRect.DOScale(Vector3.one, pulseDuration)
             .From(Vector3.zero)
             .SetEase(easeType)
+            .OnStart(() => {
+                audioSource.Play();
+                audioSource.loop = true;
+            })
             .OnComplete(() => {
                 // Проверяем, что анимация все еще активна
                 if (waveRect != null)
@@ -246,6 +261,9 @@ public class RadarUI : MonoBehaviour
         {
             waveRect.localScale = new Vector3(0f, 0f, 1f);
         }
+
+        audioSource.Stop();
+        audioSource.loop = false;
     }
 
     private void OnDestroy()

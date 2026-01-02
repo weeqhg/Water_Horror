@@ -8,7 +8,6 @@ public class RadarSystem : MonoBehaviour
     [SerializeField] private float radarRange;
     [SerializeField] private LayerMask detectionLayer;
     [SerializeField] private Transform player;
-
     [SerializeField] private Vector3 posSubmarine;
 
     [SerializeField] private float radarDuration = 10f;
@@ -87,7 +86,6 @@ public class RadarSystem : MonoBehaviour
 
     private void DetectObjects()
     {
-        Debug.Log("Проверка вызовом");
         // ОЧИЩАЕМ список перед новым сканированием!
         detectObjects.Clear();
 
@@ -96,15 +94,7 @@ public class RadarSystem : MonoBehaviour
         foreach (var collider in hitColliders)
         {
             radarUI.CreateOneMark(collider.gameObject);
-            //detectObjects.Add(collider.gameObject);
-            SonarObjectDetected(collider.gameObject);
         }
-        //sonarUI.CreateMark(detectObjects);
-
     }
 
-    private void SonarObjectDetected(GameObject obj)
-    {
-        Debug.Log($"Sonar detected: {obj.name}");
-    }
 }

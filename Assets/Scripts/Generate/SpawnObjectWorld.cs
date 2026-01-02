@@ -54,7 +54,7 @@ public class SpawnObjectWorld : MonoBehaviour
         terrainSize = world.terrainSize;
         spawnObjectDatas = world.spawnObjects;
 
-        terrainCenter = terrain.transform.position + new Vector3(terrainSize / 2f, 0f, terrainSize / 2f);
+        terrainCenter = new Vector3(terrainSize / 2f, 0f, terrainSize / 2f);
 
         Debug.Log($"X: {terrainCenter.x}, Z: {terrainCenter.z}");
     }

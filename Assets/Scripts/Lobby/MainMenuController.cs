@@ -12,6 +12,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject joinRoomPanel;
     [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private GameObject settingPanel;
+    [SerializeField] private GameObject authorPanel;
 
     [Header("Join Room References")]
     [SerializeField] private TMP_InputField joinCodeInput;
@@ -70,6 +71,7 @@ public class MainMenuController : MonoBehaviour
         joinRoomPanel.SetActive(false);
         lobbyPanel.SetActive(false);
         settingPanel.SetActive(false);
+        authorPanel.SetActive(false);
     }
 
     public void ShowCreateRoom()
@@ -80,8 +82,9 @@ public class MainMenuController : MonoBehaviour
     public void ShowJoinRoom()
     {
         mainMenuPanel.SetActive(false);
-        settingPanel.SetActive(false); 
+        settingPanel.SetActive(false);
         joinRoomPanel.SetActive(true);
+        authorPanel.SetActive(false);
     }
 
     public void ShowLobby()
@@ -90,16 +93,29 @@ public class MainMenuController : MonoBehaviour
         joinRoomPanel.SetActive(false);
         lobbyPanel.SetActive(true);
         settingPanel.SetActive(false);
+        authorPanel.SetActive(false);
     }
 
     public void ShowSetting()
     {
         mainMenuPanel.SetActive(false);
-        joinRoomPanel.SetActive(false);       
+        joinRoomPanel.SetActive(false);
         lobbyPanel.SetActive(false);
         settingPanel.SetActive(true);
+        authorPanel.SetActive(false);
+    }
+
+    public void ShowAuthor()
+    {
+        authorPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+        joinRoomPanel.SetActive(false);
+        lobbyPanel.SetActive(false);
+        settingPanel.SetActive(false);
     }
     #endregion
+
+    
 
     #region Network Methods
     public async void CreateRoom()
@@ -145,6 +161,8 @@ public class MainMenuController : MonoBehaviour
     public async void JoinRoom()
     {
         if (isAttemptingConnection) return;
+
+        if (joinCodeInput.text == "") return;
 
         string code = joinCodeInput.text.Trim().ToUpper();
 

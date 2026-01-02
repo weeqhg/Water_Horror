@@ -34,7 +34,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private OxygenSystem oxygenSystem;
     [SerializeField] private RadarSystem radarSystem;
     [SerializeField] private InteractionManager interactionManager;
-
+    [SerializeField] private InventorySystem inventorySystem;
+    [SerializeField] private FlashPlayer flashPlayer;
     private Rigidbody rb;
     private CapsuleCollider playerColliderWalk;
     [SerializeField] private BoxCollider topCollider;
@@ -44,6 +45,7 @@ public class PlayerController : NetworkBehaviour
     private readonly int Z_Axis = 2;
     private bool previousSwimPermission = true;
     private float jumpButtonHoldTime = 0f;
+    private Vector3 lastTeleport;
 
     // Локальные переменные
     private Vector3 movementInput;
@@ -160,6 +162,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         GlobalEventManager.BlockMove.AddListener(BlockMove);
+        GlobalEventManager.UnBlockMove.AddListener(UnBlockMove);
         GlobalEventManager.TeleportPos.AddListener(TeleportPlayer);
 
         // 4. Настройка курсора
@@ -294,7 +297,7 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetButtonDown("Cancel"))
         {
             if (!isDie) UnBlockMove();
-            GlobalEventManager.KeyCancel?.Invoke(); 
+            GlobalEventManager.KeyCancel?.Invoke();
         }
     }
     private void BlockMove()
@@ -305,6 +308,7 @@ public class PlayerController : NetworkBehaviour
     }
     private void UnBlockMove()
     {
+        if (isDie) return;
         Debug.Log("Движение разблокировано");
         isBlockMove = false;
         interactionManager.ToggleInteract(true);
@@ -312,9 +316,13 @@ public class PlayerController : NetworkBehaviour
 
     private void TeleportPlayer(Vector3 pos)
     {
+        if (pos != Vector3.zero)
+        {
+            lastTeleport = pos;
+        }
         UnBlockMove();
-        radarSystem.Inizialized(pos);
-        transform.position = pos;
+        radarSystem.Inizialized(lastTeleport);
+        transform.position = lastTeleport;
     }
 
     private void HandleInput()
@@ -375,11 +383,13 @@ public class PlayerController : NetworkBehaviour
 
         if (isCrouch)
         {
+            topCollider.center = new Vector3(0f, -0.8f, 0.3f);
             playerColliderWalk.center = new Vector3(0f, 0.45f, 0f);
             playerColliderWalk.height = 0.9f;
         }
         else if (!isCrouch)
         {
+            if (!swimPermission) topCollider.center = Vector3.zero;
             playerColliderWalk.center = new Vector3(0f, 0.7f, 0f);
             playerColliderWalk.height = 1.4f;
         }
@@ -388,6 +398,7 @@ public class PlayerController : NetworkBehaviour
         {
             if (permissionChanged)
             {
+                topCollider.center = Vector3.zero;
                 playerColliderWalk.direction = Y_Axis;
                 isSwim = false;
             }
@@ -400,10 +411,12 @@ public class PlayerController : NetworkBehaviour
 
         if (!IsGrounded && IsMoving && isSwim)
         {
+            topCollider.center = new Vector3(0f, -0.8f, 0.3f);
             playerColliderWalk.direction = Z_Axis;
         }
         else if (!IsGrounded && !IsMoving || IsGrounded)
         {
+            topCollider.center = Vector3.zero;
             playerColliderWalk.direction = Y_Axis;
         }
 
@@ -511,6 +524,8 @@ public class PlayerController : NetworkBehaviour
                 audioMixerController.ToggleSnapshot(false);
                 swimPermission = false;
                 postProcess.enabled = false;
+                inventorySystem.ToggleItemInWater(false);
+                flashPlayer.ChangeFog(false);
             }
         }
         if (other.CompareTag("Water"))
@@ -523,6 +538,8 @@ public class PlayerController : NetworkBehaviour
                 audioMixerController.ToggleSnapshot(true);
                 swimPermission = true;
                 postProcess.enabled = true;
+                inventorySystem.ToggleItemInWater(true);
+                flashPlayer.ChangeFog(true);
             }
         }
         if (other.CompareTag("Oxygen"))

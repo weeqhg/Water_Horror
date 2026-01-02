@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameManager : NetworkBehaviour
 {
-    [SerializeField] private GamePhaseManager gamePhaseManager;
     [SerializeField] private CoinManager coinManager;
     [SerializeField] private ShopManager shopManager;
 
@@ -16,7 +15,6 @@ public class GameManager : NetworkBehaviour
     {
         if (IsServer)
         {
-            GlobalEventManager.StartGame.AddListener(StartGame);
             NetworkManager.Singleton.OnClientConnectedCallback += OnNewClientConnected;
 
             // Обрабатываем уже подключенных клиентов (кроме хоста)
@@ -47,7 +45,7 @@ public class GameManager : NetworkBehaviour
         Debug.Log($"Spawning regular client with ID: {clientId}");
 
         // Обычные клиенты спавнятся по другой логике
-        gamePhaseManager.LoadGame(clientId);
+        GlobalEventManager.LoadGame?.Invoke(clientId);
     }
 
    
@@ -75,7 +73,6 @@ public class GameManager : NetworkBehaviour
         Debug.Log($"Starting game with world ID: {worldId}");
 
         // Запускаем игру для всех игроков
-        gamePhaseManager.StartGame(worldId);
         shopManager.FullShop(worldId);
     }
 
@@ -84,7 +81,6 @@ public class GameManager : NetworkBehaviour
         if (!IsServer) return;
 
         NetworkManager.Singleton.OnClientConnectedCallback -= OnNewClientConnected;
-        GlobalEventManager.StartGame.RemoveListener(StartGame);
 
         processedClients.Clear();
 

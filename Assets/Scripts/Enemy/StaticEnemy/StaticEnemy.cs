@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class StaticEnemy : MonoBehaviour
 {
+    [SerializeField] private LayerMask m_LayerMask;
     private AddPenalty addPenalty;
     private AudioSource audioSource;
     private ParticleSystem particleSystemEnemy;
@@ -12,8 +13,18 @@ public class StaticEnemy : MonoBehaviour
     private float duration = 7f;
     private bool isActive = true;
 
+    private string originalTag;
+    private LayerMask originalLayer;
     private void Start()
     {
+        originalTag = gameObject.tag;
+
+        if (Random.Range(0f,1f) > 0.8f)
+        {
+            gameObject.tag = "Uncknow";
+            gameObject.layer = 8;
+        }
+
         originalScale = transform.localScale;
         addPenalty = GetComponent<AddPenalty>();
         audioSource = GetComponentInChildren<AudioSource>();
@@ -37,6 +48,12 @@ public class StaticEnemy : MonoBehaviour
             transform.DOScale(originalScale, 0.2f));
                 StartCoroutine(ActiveRecharge());
             }
+        }
+
+        if (other.CompareTag("Radar"))
+        {
+            gameObject.tag = originalTag;
+            gameObject.layer = 3;
         }
     }
 

@@ -25,13 +25,13 @@ public class SubmarineMain : NetworkBehaviour
 
     public void Fall(Vector3 pos)
     {
-        transformPos.position = new Vector3(pos.x, 100f, pos.z);
+        transformPos.position = new Vector3(pos.x + 20f, 100f, pos.z);
 
         RaycastHit hit;
         if (Physics.Raycast(transformPos.position, Vector3.down, out hit, 100f, collisionLayer))
         {
             transform.position = new Vector3(
-        pos.x,  // Сохраняем X
+        pos.x + 20f,  // Сохраняем X
         hit.point.y + 5f, // Y точки попадания
         pos.z);
         }

@@ -13,6 +13,9 @@ TagManager:
   - Decor
   - Item
   - Border
+  - Enemy
+  - Uncknow
+  - Radar
   layers:
   - Default
   - TransparentFX
@@ -27,7 +30,7 @@ TagManager:
   - PostProcess
   - NavMesh
   - NonCollision
-  - 
+  - RadarLayer
   - 
   - 
   - 

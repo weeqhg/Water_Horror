@@ -13,7 +13,7 @@ public class InteractableObject : MonoBehaviour
     [SerializeField] private InteractionSettings interactionSettings;
     [SerializeField] private GameObject player;
     [SerializeField] private bool isPressE = true;
-    private Item item;  
+    private Item item;
 
 
     [Header("Interaction Events")]
@@ -30,6 +30,7 @@ public class InteractableObject : MonoBehaviour
 
     public bool IsPressE => isPressE;
 
+    private string originalTag;
     public float GetPrice()
     {
         if (item != null) return item.Price;
@@ -37,11 +38,17 @@ public class InteractableObject : MonoBehaviour
     }
     void Start()
     {
+        originalTag = gameObject.tag;
+        if (Random.Range(0f, 1f) > 0.8f)
+        {
+            gameObject.tag = "Uncknow";
+        }
+
         objectRenderer = GetComponent<Renderer>();
         item = GetComponentInParent<Item>();
         objectRenderer.enabled = false;
     }
-  
+
     public void Interact(GameObject player)
     {
         if (isHighlighted)
@@ -51,12 +58,15 @@ public class InteractableObject : MonoBehaviour
         }
     }
 
-    
+
 
 
     public void HighlightObject()
     {
         if (isHighlighted || objectRenderer == null) return;
+
+        if (gameObject.tag != originalTag)
+            gameObject.tag = originalTag;
 
         isHighlighted = true;
 
@@ -71,4 +81,5 @@ public class InteractableObject : MonoBehaviour
 
         objectRenderer.enabled = false;
     }
+
 }

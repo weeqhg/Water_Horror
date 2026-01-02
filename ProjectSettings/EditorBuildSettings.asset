@@ -8,15 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lobby.unity
     guid: 8eb07be227c495a409dad0f787e1af9b
-  - enabled: 0
-    path: Assets/Scenes/GameScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
     path: Assets/Scenes/LocationSelect.unity
     guid: dc761a55dc7b400409eeeed5608f473b
-  - enabled: 0
-    path: Assets/Scenes/TT.unity
-    guid: 4ab48076792e25542b071f6ace77aa64
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 78f9811b87349a5488d4e908791c11c9, type: 2}
     com.unity.localization.addressable-group-rules: {fileID: 11400000, guid: 4fb8d7e75b467434bbc69593b57f6cf3, type: 2}

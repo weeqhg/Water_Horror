@@ -16,6 +16,7 @@ public class SpawnEnemyWorld : NetworkBehaviour
 
 
     private List<InteractiveObject> enemies = new();
+    private List<NetworkObject> spawnedNetworkObjects = new();
     private float terrainSize = 500f;
 
     private Vector3 terrainCenter;
@@ -23,6 +24,8 @@ public class SpawnEnemyWorld : NetworkBehaviour
     private List<Vector3> spawnPoints = new();
 
 
+    private Coroutine autoSpawnCoroutine;
+    private float autoSpawnInterval = 60f;
     public void ApplyWorldSetting(WorldScriptableObject world)
     {
         if (world == null) return;
@@ -30,7 +33,7 @@ public class SpawnEnemyWorld : NetworkBehaviour
         terrainSize = world.terrainSize;
         enemies = world.spawnEnemies;
 
-        terrainCenter = transform.position + new Vector3(terrainSize / 2f, 0f, terrainSize / 2f);
+        terrainCenter = new Vector3(terrainSize / 2f, 0f, terrainSize / 2f);
     }
 
     public void StartSpawnEnemy()
@@ -38,6 +41,8 @@ public class SpawnEnemyWorld : NetworkBehaviour
         GeneratePosition();
 
         SpawnEnemies();
+
+        StartAutoSpawn();
     }
 
 
@@ -68,8 +73,8 @@ public class SpawnEnemyWorld : NetworkBehaviour
     {
         for (int attempt = 0; attempt < 10; attempt++)
         {
-            float spawnX = Random.Range(0, terrainSize / 2) + transform.position.x;
-            float spawnZ = Random.Range(0, terrainSize / 2) + transform.position.z;
+            float spawnX = Random.Range(0, terrainSize) + transform.position.x;
+            float spawnZ = Random.Range(0, terrainSize) + transform.position.z;
 
             Vector3 potentialPosition = new(spawnX, 0, spawnZ);
 
@@ -118,6 +123,8 @@ public class SpawnEnemyWorld : NetworkBehaviour
         if (networkObject != null)
         {
             networkObject.Spawn(true);
+            networkObject.transform.SetParent(transform);
+            spawnedNetworkObjects.Add(networkObject);
             Debug.Log($"Spawned enemy at position {position}");
         }
         else
@@ -137,5 +144,74 @@ public class SpawnEnemyWorld : NetworkBehaviour
         float distanceToCenter = Vector2.Distance(centerXZ, positionXZ);
 
         return distanceToCenter <= centerSafeZoneRadius;
+    }
+
+    public void ClearNetworkObjects()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogWarning("Only server can despawn network objects");
+            return;
+        }
+
+        for (int i = spawnedNetworkObjects.Count - 1; i >= 0; i--)
+        {
+            var networkObject = spawnedNetworkObjects[i];
+            if (networkObject != null && networkObject.IsSpawned)
+            {
+                try
+                {
+                    networkObject.Despawn(true);
+                    Debug.Log($"Despawned network object: {networkObject.name}");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Error despawning network object: {e.Message}");
+                }
+            }
+        }
+    }
+
+
+
+
+    public void StartAutoSpawn()
+    {
+        if (!IsServer) return;
+
+        if (autoSpawnCoroutine != null)
+        {
+            StopCoroutine(autoSpawnCoroutine);
+        }
+
+        autoSpawnCoroutine = StartCoroutine(AutoSpawnEnemiesCoroutine());
+        Debug.Log("Auto spawn started");
+    }
+
+
+    private IEnumerator AutoSpawnEnemiesCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(autoSpawnInterval);
+
+            // Проверяем лимит
+            if (spawnedNetworkObjects.Count >= maxTotalEnemy)
+            {
+                Debug.Log($"Auto spawn limit reached ({spawnedNetworkObjects.Count}/{maxTotalEnemy})");
+                continue;
+            }
+           
+            // Спавним монстра
+            SpawnAdditionalEnemy();
+        }
+    }
+
+    private void SpawnAdditionalEnemy()
+    {
+        Vector3? validPosition = FindValidSpawnPosition();
+        Vector3 spawnPos = validPosition.Value;
+        GameObject randomEnemy = enemies[Random.Range(0, enemies.Count)].prefab;
+        SpawnEnemyAtPositionSafe(randomEnemy, spawnPos);
     }
 }

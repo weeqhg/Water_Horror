@@ -7,11 +7,11 @@ public class SimpleRagdollController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private Collider mainCollider;
-    [SerializeField] private Collider dopCollider;
     [SerializeField] private Rigidbody mainRigidbody;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Transform followCamera;
-
+    [SerializeField] private Transform ragdollParent;
+    
     [Header("Foot Settings")]
     [SerializeField] private bool freezeFeetInRagdoll = true;
     [SerializeField] private float footMassMultiplier = 0.5f; // Меньшая масса для стоп
@@ -66,24 +66,14 @@ public class SimpleRagdollController : MonoBehaviour
 
 
         // Находим ВСЕ Collider в детях
-        Collider[] allColliders = GetComponentsInChildren<Collider>();
+        Collider[] allColliders = ragdollParent.GetComponentsInChildren<Collider>();
 
         foreach (Collider col in allColliders)
         {
             // Пропускаем основной Collider
             if (col == mainCollider) continue;
-            if (col == dopCollider) continue;
             // Включаем/выключаем коллайдеры костей
             col.enabled = enabled;
-        }
-
-        if (enabled)
-        {
-            followCamera.localPosition = new Vector3(0f, 0f, -0.3f);
-        }
-        else
-        {
-            followCamera.localPosition = new Vector3(0f, 0f, 0f);
         }
 
         Debug.Log($"Ragdoll {(enabled ? "enabled" : "disabled")}");

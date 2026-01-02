@@ -5060,7 +5060,7 @@ GameObject:
   - component: {fileID: 3161027803538573999}
   m_Layer: 3
   m_Name: Corals
-  m_TagString: Stone
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5094,6 +5094,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6badfb1816183f347bfdf63e41a3ccd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &4081625367642994325
 MonoBehaviour:
   m_ObjectHideFlags: 0

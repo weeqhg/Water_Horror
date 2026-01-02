@@ -15,6 +15,7 @@ public class OxygenSystem : NetworkBehaviour
     [SerializeField] private OxygenUI oxygenUI;
     [SerializeField] private SimpleRagdollController ragdollController;
     [SerializeField] private ParticleSystem oxygenParticle;
+    [SerializeField] private InventorySystem inventorySystem;
     private ParticleSystem.MainModule oxygenParticleMain;
 
     // Разрешаем владельцу писать
@@ -35,7 +36,7 @@ public class OxygenSystem : NetworkBehaviour
     private float oxygenPercentageCache = 100f;
     private bool isCriticalCache = false;
     private bool isLowCache = false;
-
+    private float currentOxygenRate = 0f;
     //Переключатель на расход кислорода
     private bool isOxygenEnabled = false;
 
@@ -70,6 +71,10 @@ public class OxygenSystem : NetworkBehaviour
 
             SyncAllPenaltiesClientRpc();
         }
+
+        GlobalEventManager.RebornPlayer.AddListener(RebornPlayerServerRpc);
+
+        currentOxygenRate = oxygenDepletionRate;
 
         currentOxygen.OnValueChanged += OnOxygenChanged;
         currentMaxOxygen.OnValueChanged += OnMaxOxygenChanged;
@@ -172,13 +177,13 @@ public class OxygenSystem : NetworkBehaviour
             // Сначала расходуем основной кислород
             if (currentOxygen.Value > 0)
             {
-                float depletion = oxygenDepletionRate * Time.deltaTime;
+                float depletion = currentOxygenRate * Time.deltaTime;
                 currentOxygen.Value = Mathf.Max(0, currentOxygen.Value - depletion);
             }
             // Когда основной закончился, расходуем дополнительный
             else if (currentDopOxygen.Value > 0)
             {
-                float depletion = oxygenDepletionRate * Time.deltaTime;
+                float depletion = currentOxygenRate * Time.deltaTime;
                 currentDopOxygen.Value = Mathf.Max(0, currentDopOxygen.Value - depletion);
 
                 Debug.Log($"Используется дополнительный кислород: {currentDopOxygen.Value:F1}");
@@ -201,8 +206,11 @@ public class OxygenSystem : NetworkBehaviour
         if (Mathf.Abs(oxygenPercentageCache - newPercentage) > 0.1f)
         {
             oxygenPercentageCache = newPercentage;
-            isCriticalCache = oxygenPercentageCache <= criticalOxygenLevel;
             isLowCache = oxygenPercentageCache <= lowOxygenLevel;
+
+            isCriticalCache = oxygenPercentageCache <= criticalOxygenLevel;
+            if (isCriticalCache) currentOxygenRate = oxygenDepletionRate / 2f;
+            else currentOxygenRate = oxygenDepletionRate;
         }
     }
 
@@ -235,6 +243,51 @@ public class OxygenSystem : NetworkBehaviour
     public void ToggleOxygenServerRpc(bool enable)
     {
         isOxygenEnabled = enable;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RebornPlayerServerRpc()
+    {
+        ClearAllPenalties();
+        NoticePlayerForRebornClientRpc();
+    }
+
+    [ClientRpc]
+    private void NoticePlayerForRebornClientRpc()
+    {
+        ragdollController.ToggleDie(false);
+        oxygenUI.ToggleDeathPanel(false);
+    }
+
+
+    public void ClearAllPenalties()
+    {
+        if (activePenaltiesDict.Count == 0)
+        {
+            Debug.Log("No penalties to clear");
+            return;
+        }
+
+        Debug.Log($"Clearing all penalties ({activePenaltiesDict.Count} total)");
+
+        // Запоминаем ID всех штрафов для удаления на клиентах
+        var allPenaltyIds = new List<string>(activePenaltiesDict.Keys);
+
+        // Очищаем словарь на сервере
+        activePenaltiesDict.Clear();
+
+        // Сбрасываем кэш штрафов
+        cachedTotalPenalty = 0f;
+
+        // Уведомляем всех клиентов об удалении каждого штрафа
+        foreach (var penaltyId in allPenaltyIds)
+        {
+            RemovePenaltyClientRpc(penaltyId);
+        }
+
+        // Принудительно обновляем максимальный кислород
+        needsMaxOxygenUpdate = true;
+        Debug.Log("All penalties cleared successfully");
     }
     #endregion
 
@@ -333,8 +386,6 @@ public class OxygenSystem : NetworkBehaviour
             };
             activePenaltiesDict.Add(penaltyId, penalty);
         }
-
-        ragdollController.Knockout(0.5f);
         oxygenUI?.UpdatePenaltyUI(); // Используем null-conditional operator
     }
     #endregion
@@ -349,7 +400,7 @@ public class OxygenSystem : NetworkBehaviour
     private void UpdateTemporaryPenalties()
     {
         if (IsServer)
-        { 
+        {
             // ⭐⭐ ОБНОВЛЯЕМ КЭШ СРАЗУ, чтобы GetAvailablePenaltyCapacity() работал корректно
             float newTotalPenalty = 0f;
             foreach (var penalty in activePenaltiesDict.Values)
@@ -496,7 +547,6 @@ public class OxygenSystem : NetworkBehaviour
 
         if (recoveryCoroutine != null) return;
 
-        Debug.Log("Снова смерть");
         recoveryCoroutine = StartCoroutine(WaitAndRecover());
     }
 
@@ -505,7 +555,8 @@ public class OxygenSystem : NetworkBehaviour
         Debug.Log("Начинается восстановление после отключки...");
 
         float timer = 0f;
-       
+
+        inventorySystem.DropAllItems();
         oxygenUI.ToggleDeathPanel(true);
 
         while (timer < oxygenRecoveryTime)
@@ -537,6 +588,8 @@ public class OxygenSystem : NetworkBehaviour
         }
         else
         {
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+            GlobalEventManager.DeathPlayer?.Invoke(localClientId);
             Debug.Log("Player died from oxygen depletion");
             Debug.Log($"Время вышло, но кислород ({currentOxygen.Value:F1}) недостаточен для восстановления");
         }
@@ -550,7 +603,7 @@ public class OxygenSystem : NetworkBehaviour
             OnCriticalOxygen();
         }
 
-        if (newValue <= 1f)
+        if (newValue <= 1f & currentDopOxygen.Value <= 1f)
         {
             OnOxygenKnock();
         }
@@ -564,6 +617,11 @@ public class OxygenSystem : NetworkBehaviour
 
     private void OnDopOxygenChanged(float oldValue, float newValue)
     {
+        if (newValue <= 1f & currentOxygen.Value <= 1f)
+        {
+            OnOxygenKnock();
+        }
+
         oxygenUI?.UpdateDopOxygenUI();
     }
 

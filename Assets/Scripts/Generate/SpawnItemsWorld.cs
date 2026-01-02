@@ -19,6 +19,7 @@ public class SpawnItems : MonoBehaviour
 
 
     private List<InteractiveObject> items = new();
+    private List<NetworkObject> spawnedNetworkObjects = new();
 
     private float terrainSize = 500f;
 
@@ -126,6 +127,7 @@ public class SpawnItems : MonoBehaviour
         {
             networkObject.Spawn(true);
             networkObject.transform.SetParent(transform);
+            spawnedNetworkObjects.Add(networkObject);
             Debug.Log($"Spawned enemy at position {position}");
         }
         else
@@ -145,6 +147,33 @@ public class SpawnItems : MonoBehaviour
         float distanceToCenter = Vector2.Distance(centerXZ, positionXZ);
 
         return distanceToCenter <= centerSafeZoneRadius;
+    }
+
+
+    public void ClearNetworkObjects()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogWarning("Only server can despawn network objects");
+            return;
+        }
+
+        for (int i = spawnedNetworkObjects.Count - 1; i >= 0; i--)
+        {
+            var networkObject = spawnedNetworkObjects[i];
+            if (networkObject != null && networkObject.IsSpawned)
+            {
+                try
+                {
+                    networkObject.Despawn(true);
+                    Debug.Log($"Despawned network object: {networkObject.name}");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Error despawning network object: {e.Message}");
+                }
+            }
+        }
     }
 }
 

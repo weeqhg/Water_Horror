@@ -30,6 +30,7 @@ public class PanelAnimations : MonoBehaviour
     public void StartDisappearanceAnimation()
     {
         gameObject.SetActive(true);
+        panel.DOFade(1f, 0f);
         StartCoroutine(WaitDisappearanceAnimation());
     }
     private IEnumerator WaitDisappearanceAnimation()
@@ -45,6 +46,7 @@ public class PanelAnimations : MonoBehaviour
     public void StartAppearanceAnimation()
     {
         gameObject.SetActive(true);
+        panel.DOFade(0f, 0f);
         StartCoroutine(WaitAppearanceAnimation());
     }
 
